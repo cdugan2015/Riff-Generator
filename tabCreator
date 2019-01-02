@@ -1,0 +1,61 @@
+"""
+#Guitar ONLY
+#C major scale
+Example Input:'C D E F G A B'
+Example Output:
+-----------------0--2-----
+--------0--1--3-----------
+--0--2--------------------
+--------------------------
+"""
+#Improvements: find way to indicate multiple notes simeltaneously and print them.
+#Simeltaneous indicated by no whitespace, eg. CE
+#note that impossible to have same-string simeltaneous notes (CD)
+    #if same-string simeltaneous note is given, only the last note in the combination will be printed
+#Ex Input: C,E C,F C,G C,F C,G C,A C,B C,C2
+"""Procedure:
+1. initialize scale
+2. initialize lines
+3. iterate through list of notes/note-combinations
+4. iterate through notes of each combination
+"""
+# Optional transcribe to move up the fretboard.
+def tab(notes, transcr = 0):
+    
+    out=''
+    notes = notes.split(' ')
+    print(notes)
+    #in scale dict, numbers correspond to numbers the next scale, eg.
+
+    guitarDict = {'E2':'60','F2':'61','F#2':'62','G2':'63','G#2':'64',
+              'A3':'50','A#3':'51','B3':'52','C3':'53','C#3':'54',
+              'D3':'40','D#3':'41','E3':'42','F3':'43','F#3':'44',
+              'G3':'30','G#3':'31','A4':'32','A#4':'33',
+              'B4':'20','C4':'21','C#4':'22','D4':'23','D#4':'24',
+              'E4':'10','F4':'11','F#4':'12','G4':'13','G#4':'14',
+                '-':'-'
+              }
+             #string corresponding to string and fret (C:32) because it's played on the 2nd fret of the 3rd string
+    line1 = "-" * (len(notes)*3)
+    lines = [line1]*6
+    for x in range(0,6):
+        lines[x] = list(lines[x])
+    for i in range(0,len(notes)):
+        note = notes[i]#find the note from the input
+        note = note.split(',')
+        for note1 in note:
+            stringFret = guitarDict[note1] #use dict to find the string and fret
+            if stringFret == '-': #use '-' to indicate a rest
+                break
+            else:
+                line = lines[int(stringFret[0])-1] #edit the correct line
+                line[i*3] = str(int(stringFret[1])+transcr) #change the correct value of that line
+            lines[int(stringFret[0])-1] = line #update the lst with lines
+    for line in lines:
+        out+=''.join(line) + '\n'
+    return(out)
+
+#E major scale
+#print("E Major Scale : \n" + tab('E2 - F#2 G#2 A3 B3 C#3 D#3 E3 F#3 G#3 A4 B4 C#4 D#4 E4 F#4 G#4'))
+#E minor scale
+print("E Minor Scale: \n" + tab('E2 - F#2 G2 A3 B3 C3 D3 E3 F#3 G3 A4 B4 C4 D4 E4 F#4 G4'))
