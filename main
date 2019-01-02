@@ -1,0 +1,122 @@
+'''Generate a riff randomly:
+input: number of notes (optionally the rates of different steps/rests)
+ouput: string of notes separated by spaces
+example:
+num:  8
+Out: 'C D E F G A B A'
+'''
+from TabCreatorG import *
+from random import *
+#Constants
+Notes = ['E2','F2','F#2','G2','G#2',
+         'A3','A#3','B3','C3','C#3','D3','D#3','E3','F3','F#3','G3','G#3',
+         'A4','A#4','B4','C4','C#4','D4','D#4','E4','F4','F#4','G4','G#4'
+         ]
+         
+#Identify the patterns for each scale and organize them
+MajorPatt = [2, 2, 1, 2, 2, 2, 1]
+MinorPatt = [2, 1, 2, 2, 1, 2, 2]
+MajorPPatt = [3, 2, 2, 3, 2]
+MinorPPatt = [2, 2, 3, 2, 2, 1]
+BluesPatt = [3, 2, 1, 1, 3, 2] 
+Patts = [MajorPatt, MinorPatt, MajorPPatt, MinorPPatt, BluesPatt]
+for i in range(0,len(Patts)):
+    Patts[i] += Patts[i] + Patts[i] +Patts[i]
+#initialize each scale that will be created 
+Major = [0]
+Minor =[0]
+MajorP = [0]
+MinorP = [0]
+Blues = [0]
+scales = [Major, Minor, MinorP, MajorP, Blues]
+for x in range(0,len(scales)):
+    i = 0
+    while(True):
+        add = scales[x][i]+ Patts[x][i]
+        
+        if(add >= len(Notes)):
+            break
+            
+    
+        scales[x].append(add)
+        
+        
+        i+=1
+
+#User options:
+num = 16
+#choose scale:
+scaleKey = 'G'
+inScale = Blues
+#Add regular base note
+baseTrue = True
+baseRepeat = 3
+#indicate starting note
+start = 9
+
+#Code begins
+if(scaleKey[0] == 'E' or scaleKey[0] == 'F' or scaleKey[0] == 'G'):
+    scaleKey+='2'
+else:
+    scaleKey+='3'
+idx = Notes.index(scaleKey)
+Notes = Notes[idx:] + Notes[:idx]
+#adjust base note
+
+lst = [Notes[i] for i in inScale]
+print("lst:")
+print(lst)
+
+rand = randint(0,7)
+
+#first create list with numbers, then convert to letters
+
+out = [start]
+for n in range(1,num):
+    new = 1
+    chg = 0
+    orig = out[n-1]
+    rand = randint(0,120)
+    rand2 = randint(0,1)
+    if rand > 0 and rand < 20:
+        chg = 2
+    elif rand >= 20 and rand < 40:
+        chg = 1
+    elif rand >= 40 and rand < 60:
+        chg = 0
+    elif rand >= 60 and rand < 80:
+        chg = -1
+    elif rand >= 80 and rand <= 100:
+        chg = -2
+    new = orig + chg
+    while(new < 0 or new > len(lst)-1):
+        rand = randint(0,120)
+        if rand > 0 and rand < 20:
+            chg = 2
+        elif rand >= 20 and rand < 40:
+            chg = 1
+        elif rand >= 40 and rand < 60:
+            chg = 0
+        elif rand >= 60 and rand < 80:
+            chg = -1
+        elif rand >= 80 and rand < 100:
+            chg = -2
+        new = orig + chg
+    out.append(new)
+
+notes = []
+print(out)
+for x in out:
+    notes.append(lst[x])
+if baseTrue:
+    for x in range(0, len(notes), baseRepeat):
+        notes[x] += ',' + lst[0]
+    #for x in range(4,len(notes), baseRepeat):
+     #   notes.insert(x,'C')
+notes = ' '.join(notes)
+tabs = tab(notes)
+fp = open('randTabs.txt', 'w')
+fp.write(tabs)
+fp.close()
+print(tabs)
+
